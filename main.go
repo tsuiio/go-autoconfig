@@ -1,23 +1,26 @@
 package main // import "go-autoconfig"
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"text/template"
+
+	"go-autoconfig/config"
+	"go-autoconfig/handlers"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"go-autoconfig/config"
-	"go-autoconfig/handlers"
 )
 
-var path = flag.String(
-	"config",
-	"",
-	"enter path to config file",
+//go:embed templates/*.tmpl
+var tmpl embed.FS
+
+var (
+	path = flag.String("config", "", "enter path to config file")
+	port = flag.String("port", "8080", "port to run the server on")
 )
 
 func main() {
@@ -32,7 +35,7 @@ func main() {
 	}
 
 	tmpl := &Template{
-		templates: template.Must(template.ParseGlob(filepath.Join("templates", "*.tmpl"))),
+		templates: template.Must(template.ParseFS(tmpl, "templates/*.tmpl")),
 	}
 
 	// Init Echo
@@ -44,13 +47,13 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	h := handlers.Handler{conf}
+	h := handlers.Handler{Config: conf}
 	e.POST("/autodiscover/autodiscover.xml", h.Outlook)
 	e.GET("/mail/config-v1.1.xml", h.Thunderbird)
 	e.GET("/email.mobileconfig", h.AppleMail)
 
 	// Start server
-	e.Logger.Fatal(e.Start(conf.ServiceAddr))
+	e.Logger.Fatal(e.Start(":" + *port))
 }
 
 type Template struct {

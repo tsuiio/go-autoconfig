@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"io"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
 	"go-autoconfig/config"
+
+	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
@@ -31,7 +32,7 @@ func (h *Handler) Outlook(ctx echo.Context) error {
 		} `xml:"Request"`
 	}
 
-	b, err := ioutil.ReadAll(ctx.Request().Body)
+	b, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

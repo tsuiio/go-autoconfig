@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 
 	"gopkg.in/go-playground/validator.v9"
 	"gopkg.in/yaml.v2"
@@ -23,7 +23,7 @@ type Server struct {
 }
 
 func NewConfig(p string) (*Config, error) {
-	b, err := ioutil.ReadFile(p)
+	b, err := os.ReadFile(p)
 	if err != nil {
 		return nil, err
 	}
