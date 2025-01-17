@@ -17,7 +17,7 @@ jobs:
         include:
           - os: ubuntu-24.04
             platform: linux/amd64
-          - os: ububtu-24.04-arm
+          - os: ubuntu-24.04-arm
             platform: linux/arm64
     runs-on: ${{ matrix.os }}
 
@@ -107,9 +107,9 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}},enable={{is_default_branch}}
-            type=semver,pattern={{major}},enable={{is_default_branch}}
+            type=semver,pattern={{version}},enable={{is_default_branch}} 
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}},enable={{is_default_branch}}
 
       - name: Create manifest list and push
         working-directory: /tmp/digests
